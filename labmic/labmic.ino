@@ -53,9 +53,9 @@ boolean configAPN(String apn)
 
 void loop()
 {
-//    if (statusConfig == 0) {
-//        configAPN(apn);
-//    }
+    if (statusConfig == 0) {
+        configAPN(apn);
+    }
     String data = String(getSerialData());
     if (data.length() > 0) {
         splitAndSend(data);
@@ -68,9 +68,7 @@ void splitAndSend(String text)
     String key = getKey(text);
     String value = getValue(text);
     if ((id.length() > 0) && (key.length() > 0) && (value.length() > 0)) {
-//        addSensor(id, key, value);
-    Serial.println("id: " + id + ", key: " + key + ", value: " + value );
-
+        addSensor(id, key, value);
     }
 }
 
