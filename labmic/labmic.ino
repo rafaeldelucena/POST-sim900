@@ -53,9 +53,9 @@ boolean configAPN(String apn)
 
 void loop()
 {
-    if (statusConfig == 0) {
-        configAPN(apn);
-    }
+//    if (statusConfig == 0) {
+//        configAPN(apn);
+//    }
     String data = String(getSerialData());
     if (data.length() > 0) {
         splitAndSend(data);
@@ -68,7 +68,9 @@ void splitAndSend(String text)
     String key = getKey(text);
     String value = getValue(text);
     if ((id.length() > 0) && (key.length() > 0) && (value.length() > 0)) {
-        addSensor(id, key, value);
+//        addSensor(id, key, value);
+    Serial.println("id: " + id + ", key: " + key + ", value: " + value );
+
     }
 }
 
@@ -117,13 +119,17 @@ void addSensor(String mote_id, String name, String value)
     initHttpRequest(host);
 
     String dataPost = "data[Sensor][name]=" + name + "&data[Sensor][value]=" + value + "&data[Sensor][mote_id]=" + mote_id;
-
+    
     String httpData = "AT+HTTPDATA=";
     String delayToSend = ",3000";
 
-    sim900.println(httpData + dataPost.length() + delayToSend);// It is ready to receive data from uart , and DCD has been set to low, the arguments are size in bytes and timeout to send a message
+    postMethodHttp();
+
+    sendCommandAndWaitResp(httpData + dataPost.length() + delayToSend, "OK", 3, 5000);// It is ready to receive data from uart , and DCD has been set to low, the arguments are size in bytes and timeout to send a message
 
     sim900.print(dataPost);
+    delay(100);
+
     finishHttpRequest();
 }
 
@@ -133,12 +139,15 @@ void addMote(int id, String rxPackets, String txPackets, String rxBytes, String 
     String httpData = "AT+HTTPDATA=";
     String delayToSend = ",3000";
 
+
     String postData = "data[Mote][rx_packets]="+ rxPackets + "&data[Mote][tx_packets]=" + txPackets + "&data[Mote][rx_bytes]="+ rxBytes + "&data[Mote][tx_bytes]=" + txBytes;
 
-    sendCommandAndWaitResp(httpData + postData.length() + delayToSend, "OK", 3, 3000);// It is ready to receive data from uart , and DCD has been set to low, the arguments are size in bytes and timeout to send a message
+    postMethodHttp();
+    
+    sendCommandAndWaitResp(httpData + postData.length() + delayToSend, "OK", 3, 5000);// It is ready to receive data from uart , and DCD has been set to low, the arguments are size in bytes and timeout to send a message
 
     sim900.print(postData);
-    delay(3000);
+    delay(100);
 
     finishHttpRequest();
 }
